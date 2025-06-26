@@ -1,184 +1,150 @@
-# Nexay – Sistema de Mensagens
+# Nuvem – Sistema de Armazenamento de Arquivos
 
-**Nexay** é um projeto **acadêmico e experimental** que simula um sistema de mensagens. Ele foi desenvolvido com o objetivo de aprender e aplicar boas práticas de segurança da informação. Não se trata de um produto pronto para produção, mas sim de uma base sólida para estudo e evolução.
-A nossa aplicação utiliza **Python (Flask)** no backend e **React.js** no frontend, com comunicação entre as partes via **API RESTful**.
+**Nuvem** é um projeto **acadêmico e experimental** voltado para o armazenamento seguro de arquivos. Nele, usuários podem fazer upload de arquivos para o servidor, escolhendo se desejam mantê-los **públicos** (acessíveis por link) ou **privados** (acesso restrito ao dono). A aplicação foca em práticas de **segurança da informação**, utilizando autenticação em duas etapas, criptografia e controle de sessões.
+
+O sistema utiliza **Python (Flask)** no backend e **React.js** no frontend, com comunicação via **API RESTful**.
 
 ---
 
-## Três Pilares de Segurança no Nexay
-
-Durante o desenvolvimento, buscamos aplicar ao menos **três mecanismos centrais de segurança**:
+## 🔐 Medidas de Segurança
 
 1. **Autenticação via JWT (JSON Web Token)**
-   Após o login e registro, o servidor gera um token JWT que é enviado ao cliente e usado para autenticação em cada requisição subsequente. Isso elimina a necessidade de sessões persistentes no servidor e melhora a escalabilidade.
+   O servidor gera tokens JWT com tempo de expiração, evitando sessões persistentes inseguras.
 
-2. **2FA (Autenticação de Dois Fatores por E-mail)**
-   Para evitar acessos indevidos mesmo após o login com credenciais corretas, um segundo fator de verificação é enviado por e-mail, exigindo a confirmação de um código antes do acesso completo à conta.
+2. **Verificação em Duas Etapas (2SV por e-mail)**
+   Após inserir a senha, um código de verificação é enviado por e-mail.
 
-3. **Registro de Logs Sensíveis no Banco de Dados**
-   Toda ação relevante (login, logout, falhas de autenticação, envio de mensagens, alterações de senha, etc.) é registrada em uma tabela de logs no banco de dados, permitindo rastreabilidade e auditoria.
+3. **Criptografia de Senhas com Bcrypt**
+   Todas as senhas são armazenadas como hashes seguros.
 
----
+4. **Criptografia dos Nomes de Arquivos com Fernet (cryptography)**
+   Os nomes dos arquivos são criptografados para dificultar a identificação.
 
-## Documentação Técnica
+5. **HTTPS**
+   Suporte a HTTPS para proteger a comunicação em produção.
 
-Na **raiz do projeto (`nexay/`)**, há uma pasta chamada `DOC/` contendo:
+6. **Registro de Logs com IP e Horário**
+   Logs de atividades são mantidos para rastreabilidade e auditoria.
 
-* Documento de Visão do Projeto (DVP)
-* Cenários de Casos de Uso
-* Diagrama de Casos de Uso
-* Diagrama de Sequência
+7. **Exclusão de Conta e Dados**
+   O usuário pode excluir sua conta e arquivos, seguindo política de retenção.
 
-Esses arquivos descrevem como o sistema funciona, os fluxos principais e as interações esperadas.
+8. **Política de Senha Forte**
+   Validação de complexidade mínima de senhas.
 
----
+9. **Política de Consentimento**
+   O sistema exige aceite dos termos de privacidade antes do uso.
 
-## Funcionalidades Incluídas
-
-* Cadastro e login de usuários
-* Autenticação JWT e verificação 2FA por e-mail
-* Envio e recebimento de mensagens
-* Gerenciamento de contatos (adicionar, bloquear, excluir)
-* Histórico de atividades via logs salvos no banco
+10. **Backup dos Dados**
+    Estrutura prevista para backups regulares de arquivos e banco de dados.
 
 ---
 
-## Autores
+## ⚙️ Estrutura Técnica
 
-### Everton Hian dos Santos Pinheiro
-
-* Backend (Flask, PostgreSQL, JWT)
-* Arquitetura de Segurança
-* Documentação Técnica
-
-### Allan Kardec de Jesus Feliz Navegantes
-
-* Frontend (React.js)
-* Integração com APIs
-* Design de Interface
+| Camada    | Tecnologias                                        |
+| --------- | -------------------------------------------------- |
+| Backend   | Flask, SQLAlchemy, Flask-Mail, JWT, Flask-SocketIO |
+| Segurança | JWT, bcrypt, cryptography.fernet, logs             |
+| Banco     | PostgreSQL, Flask-Migrate                          |
+| Frontend  | React.js, Axios, React Router                      |
+| Infra     | Dotenv, CORS, eventlet, WebSocket                  |
 
 ---
 
-## Requisitos para Execução
+## 📁 Funcionalidades
+
+* Upload de arquivos públicos ou privados
+* Compartilhamento de arquivos por link
+* Login com autenticação em duas etapas (2SV)
+* Exclusão de arquivos e da conta
+* Registro de logs
+* Upload de foto de perfil
+* WebSocket (em desenvolvimento)
+
+---
+
+## 👨‍💻 Autor
+
+**Everton Hian dos Santos Pinheiro**
+Desenvolvimento completo do backend, frontend e arquitetura de segurança.
+
+---
+
+## 📦 Requisitos
 
 ### Backend
 
 * Python 3.10+
-* PostgreSQL (rodando localmente ou em container)
-* Ambiente virtual (recomendado)
+* PostgreSQL
+* Ambiente virtual (venv)
 
 ### Frontend
 
-* Node.js (18+)
+* Node.js 18+
 * npm
 
 ---
 
-## Configurando o Banco de Dados (PostgreSQL)
-### Passo 1: Instale o PostgreSQL
-Baixe e instale o PostgreSQL no seu computador.
-Durante a instalação, anote a senha que você definiu para o usuário postgres.
+## ⚙️ Configuração do `.env`
 
-### Passo 2: Abra o pgAdmin (Interface Gráfica do PostgreSQL)
-Após instalar, procure por pgAdmin no seu computador e abra.
-Clique em Servers > PostgreSQL e insira a senha que você criou.
-
-### Passo 3: O Banco será Criado Automaticamente
-O Nexay já tem um sistema que cria o banco de dados sozinho quando você inicia o backend. Você só precisa garantir que:
-* O PostgreSQL está rodando.
-* O usuário postgres existe e que sua configuração esta no .env.
----
-
-## Configurando o Arquivo .env (Backend)
-O .env guarda configurações importantes como senhas e chaves.
-### Passo 1: Edite ou crie o arquivo .env na pasta backend/
-    Copie o conteúdo abaixo e cole em um novo arquivo chamado .env:
-
+Crie um arquivo `.env` dentro da pasta `backend/` com o seguinte conteúdo, substituindo os valores de exemplo pelos seus:
 
 ```env
 # Banco de Dados
-SQLALCHEMY_DATABASE_URI=postgresql+psycopg2://postgres:senha@localhost:5432/apiNexsay
+SQLALCHEMY_DATABASE_URI=postgresql+psycopg2://usuario:senha@localhost:5432/nomedobanco
 
-# Chaves
-SECRET_KEY=sua_chave_flask
-JWT_SECRET_KEY=sua_chave_jwt
+# Chaves de Segurança
+SECRET_KEY=sua_chave_secreta_flask
+JWT_SECRET_KEY=sua_chave_secreta_jwt
 
 # Uploads
 UPLOAD_FOLDER=uploads/fotos_perfil
 
-# WebSocket
+# WebSocket (opcional)
 SOCKETIO_ASYNC_MODE=eventlet
 SOCKETIO_CORS_ALLOWED_ORIGINS=http://localhost:3000
+SOCKETIO_LOGGER=false
+SOCKETIO_ENGINEIO_LOGGER=false
 SOCKETIO_PING_TIMEOUT=60
 SOCKETIO_PING_INTERVAL=25
 
-# E-mail (2FA)
+# E-mail (para 2SV)
 MAIL_SERVER=smtp.gmail.com
 MAIL_PORT=587
 MAIL_USE_TLS=true
 MAIL_USERNAME=seu_email@gmail.com
-MAIL_PASSWORD=sua_senha_app
+MAIL_PASSWORD=sua_senha_de_app
 MAIL_DEFAULT_SENDER=seu_email@gmail.com
 
 # Ambiente
 ENV=development
 DEBUG=true
+USE_RELOADER=True
 ```
-### Passo 2: Substitua os valores
-* SUA_SENHA → A senha do PostgreSQL que você definiu na instalação.
-* seu_email@gmail.com → Um e-mail Gmail (para enviar códigos 2FA).
-* senha_do_app_do_gmail → Não é a senha do e-mail! É uma "Senha de App" (https://support.google.com/accounts/answer/185833?hl=pt-BR).
 
+> ⚠️ **Atenção:** Para usar o Gmail com esse sistema, você deve gerar uma [senha de app](https://support.google.com/accounts/answer/185833?hl=pt-BR), pois sua senha normal do Gmail **não funciona**.
 
 ---
 
-##  Como Executar o Projeto
+## 🚀 Como Executar o Projeto
 
 ### 1. Clonando o Repositório
 
-Certifique-se de ter o **Git** instalado e execute o seguinte comando no terminal:
-
 ```bash
-git clone https://github.com/EvertonHSP/Nexsay.git
-cd Nexsay
+git clone git@github.com:EvertonHSP/Nuvem.git
+cd Nuvem
 ```
 
 ---
 
 ### 2. Executando o Backend
 
-> Requisitos: Python 3.8+, PostgreSQL instalado e rodando.
-
-1. Acesse a pasta do backend:
-
 ```bash
 cd backend
-```
-
-2. Crie e ative o ambiente virtual:
-
-```bash
 python -m venv venv
-source venv/bin/activate  # No Windows: venv\Scripts\activate
-```
-
-3. Instale as dependências:
-
-```bash
+venv\Scripts\activate       # No Windows
 pip install -r requirements.txt
-```
-
-4. Configure o banco de dados PostgreSQL e verifique se ele está rodando.
-
-5. Realize as migrações:
-
-Não é nescessário, ja existe a função **create_database_if_not_exists()** que inicializa o banco. 
-**Porém** para essa função funcionar, o seu arquivo **.env** deve estar bem definido, pois vai ser nescessario acessar a senha do seu banco de dados
-
-
-6. Inicie a aplicação:
-
-```bash
 python manage.py
 ```
 
@@ -186,29 +152,13 @@ python manage.py
 
 ### 3. Executando o Frontend
 
-> Requisitos: Node.js e npm instalados.
-
-1. Acesse a pasta do frontend em outro terminal:
-
 ```bash
 cd frontend
-```
-
-2. Instale as dependências do React:
-
-```bash
 npm install
+npm start           # Modo desenvolvimento
 ```
 
-3. Configure as variáveis de ambiente, se necessário (ex: `.env` com URL da API).
-
-4. Para ambiente de desenvolvimento:
-
-```bash
-npm start
-```
-
-5. Para ambiente de produção:
+Para produção:
 
 ```bash
 npm run build
@@ -217,26 +167,49 @@ npx serve -s build
 
 ---
 
-## Bibliotecas Utilizadas no Frontend
+## 📚 Bibliotecas Utilizadas
 
-| Biblioteca       | Comando para instalar          | Função principal                            |
-| ---------------- | ------------------------------ | ------------------------------------------- |
-| React            | `npm install react`            | Biblioteca principal para criar interfaces. |
-| ReactDOM         | `npm install react-dom`        | Renderiza o app na árvore DOM do navegador. |
-| React Router DOM | `npm install react-router-dom` | Gerenciamento de rotas entre páginas.       |
-| Axios            | `npm install axios`            | Realiza requisições HTTP à API.             |
-| Dotenv           | `npm install dotenv`           | Gerencia variáveis de ambiente no frontend. |
+### Backend
+
+```
+Flask
+SQLAlchemy
+psycopg2-binary
+marshmallow
+python-dotenv
+flask-cors
+flask-migrate
+flask-bcrypt
+flask-restful
+flask_jwt_extended
+flask_mail
+requests
+Flask-SocketIO
+python-engineio
+python-socketio
+eventlet
+cryptography
+```
+
+### Frontend
+
+```
+| Biblioteca                    | Finalidade                                                    |
+| ----------------------------- | ------------------------------------------------------------- |
+| `react`                       | Biblioteca principal para criação de interfaces               |
+| `react-dom`                   | Responsável por renderizar o React na árvore DOM              |
+| `react-router-dom`            | Gerenciamento de rotas no frontend                            |
+| `axios`                       | Realiza requisições HTTP para o backend                       |
+| `crypto-js`                   | Criptografia de dados no frontend                             |
+| `dexie`                       | Abstração simples para uso do IndexedDB (armazenamento local) |
+| `react-icons`                 | Ícones SVG prontos para uso em React                          |
+| `react-scripts`               | Scripts para build, start, test e eject do Create React App   |
+| `web-vitals`                  | Coleta métricas de performance (opcional)                     |
+| `@testing-library/react`      | Ferramentas para testes de componentes React                  |
+| `@testing-library/jest-dom`   | Extensões de matchers do Jest para testes mais legíveis       |
+| `@testing-library/user-event` | Simula interações reais do usuário nos testes                 |
+
+
+```
 
 ---
-
-## Tecnologias Utilizadas
-
-| Camada      | Tecnologias                                        |
-| ----------- | -------------------------------------------------- |
-| Backend     | Flask, Flask-JWT-Extended, SQLAlchemy, Flask-Mail  |
-| Segurança   | JWT, 2FA, bcrypt, logs                             |
-| Comunicação | Flask-SocketIO + WebSocket (eventlet)              |
-| Banco       | PostgreSQL, Flask-Migrate                          |
-| Frontend    | React.js, WebSocket Client, Axios                  |
-| Infra       | Variáveis de ambiente, CORS, dotenv, logs em banco |
-
